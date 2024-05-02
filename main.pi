@@ -1,0 +1,117 @@
+use_bpm 174
+
+# Functions
+define :intro do
+  use_synth :hollow
+  play_chord [:E3, :G3, :B3], attack: 8, release: 16, amp: 0.3
+  sleep 16
+end
+
+define :drum_pattern do
+  sample :loop_amen, beat_stretch: 2, amp: 0.7
+  sleep 2
+  sample :loop_amen, beat_stretch: 1, start: 0.5, finish: 0.75, amp: 0.5
+  sleep 1
+  sample :drum_cymbal_open, sustain: 0.1, release: 0.2, amp: 0.3
+  sleep 0.5
+end
+
+define :bassline do
+  use_synth :dsaw
+  play :E2, release: 0.25, cutoff: 80
+  sleep 0.25
+  play :E3, release: 0.25, cutoff: 80
+  sleep 0.25
+  play :G2, release: 0.5, cutoff: 90
+  sleep 0.25
+  play :E2, release: 0.25, cutoff: 80
+  sleep 0.25
+  play :B2, release: 0.25, cutoff: 85
+  sleep 0.5
+end
+
+define :ambient_pad do
+  use_synth :hollow
+  play_chord [:E3, :G3, :B3, :D4], attack: 4, release: 8, amp: 0.3
+  sleep 8
+  with_fx :echo, phase: 0.5, decay: 2 do
+    play_chord [:E4, :G4, :B4, :D5], attack: 4, release: 8, amp: 0.2
+    sleep 8
+  end
+end
+
+define :melody do
+  use_synth :blade
+  play_pattern_timed [:E4, :G4, :B4, :D5], [0.5, 0.25, 0.75, 0.5], amp: 0.5
+end
+
+# Added variations
+define :bassline_variation do
+  use_synth :tb303
+  play_pattern_timed [:E2, :G2, :B2, :D3], [0.25, 0.25, 0.5, 0.5], release: 0.25, cutoff: 90
+end
+
+define :drum_fill do
+  sample :loop_amen, beat_stretch: 1, amp: 0.8, rate: 1.5
+  sleep 1
+end
+
+# Song structure
+live_loop :intro do
+  intro
+  sleep 16
+end
+
+live_loop :drums do
+  sync :intro
+  drum_pattern
+end
+
+live_loop :bass do
+  sync :intro
+  bassline
+end
+
+live_loop :ambient do
+  sync :intro
+  ambient_pad
+end
+
+live_loop :melody_loop do
+  sync :intro
+  melody
+  sleep 4
+end
+
+live_loop :breakdown do
+  sync :intro
+  sleep 68 # Adjusted for timing
+  bassline_variation
+end
+
+live_loop :main2_drums do
+  sync :breakdown
+  drum_pattern
+end
+
+live_loop :main2_bass do
+  sync :breakdown
+  bassline_variation
+end
+
+live_loop :main2_ambient do
+  sync :breakdown
+  ambient_pad
+end
+
+live_loop :main2_melody do
+  sync :breakdown
+  melody
+  sleep 4
+end
+
+live_loop :outro do
+  sync :breakdown
+  sleep 62 # Adjusted for timing
+  ambient_pad
+end
